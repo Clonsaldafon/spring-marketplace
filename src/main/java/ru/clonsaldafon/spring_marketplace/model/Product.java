@@ -1,6 +1,8 @@
 package ru.clonsaldafon.spring_marketplace.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 import java.util.List;
 
@@ -21,6 +23,10 @@ public class Product {
     @Column(nullable = false)
     private Double price;
 
+    @Column(nullable = false)
+    @Min(value = 0)
+    private Integer quantity;
+
     @ManyToOne
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
@@ -32,10 +38,11 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Feedback> feedbacks;
 
-    public Product(String name, String description, Double price, Vendor vendor) {
+    public Product(String name, String description, Double price, Integer quantity, Vendor vendor) {
         this.name = name;
         this.description = description;
         this.price = price;
+        this.quantity = quantity;
         this.vendor = vendor;
     }
 
@@ -68,6 +75,14 @@ public class Product {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     public Vendor getVendor() {

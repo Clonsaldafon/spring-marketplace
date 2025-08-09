@@ -15,11 +15,14 @@ public class UserBase {
     @Column(length = 50, nullable = false, unique = true)
     private String email;
 
-    @Column(length = 16, nullable = false)
+    @Column(nullable = false)
     private String password;
 
     @Column(length = 50, nullable = false)
     private String name;
+
+    @Column(name = "user_type", insertable = false, updatable = false)
+    private String role;
 
     public UserBase(String email, String password, String name) {
         this.email = email;
@@ -56,5 +59,9 @@ public class UserBase {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getRole() {
+        return role;
     }
 }

@@ -1,8 +1,10 @@
 package ru.clonsaldafon.spring_marketplace.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.clonsaldafon.spring_marketplace.model.User;
 import ru.clonsaldafon.spring_marketplace.model.UserBase;
@@ -12,27 +14,30 @@ import ru.clonsaldafon.spring_marketplace.service.UserService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1")
+@Validated
 public class UserController {
 
     @Autowired
     private UserService service;
 
     @GetMapping
-    public ResponseEntity<List<UserBase>> getAllUsers() {
-        List<UserBase> users = service.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UserBase> getAll() {
+        return service.getAll();
     }
 
-    @PostMapping("/user")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User savedUser = service.createUser(user);
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+    @PostMapping("/users")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createUser(@Valid @RequestBody User user) {
+        service.createUser(user);
+        return "redirect:/login?registered";
     }
 
-    @PostMapping("/vendor")
-    public ResponseEntity<Vendor> createVendor(@RequestBody Vendor vendor) {
-        Vendor savedVendor = service.createVendor(vendor);
-        return new ResponseEntity<>(savedVendor, HttpStatus.CREATED);
+    @PostMapping("/vendors")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createVendor(@Valid @RequestBody Vendor vendor) {
+        service.createVendor(vendor);
+        return "redirect:/login?registered";
     }
 }
